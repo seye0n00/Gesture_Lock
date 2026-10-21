@@ -39,7 +39,7 @@ static size_t input_pos = DEFAULT_INPUT_POS;
 
 
 // 특정 행 전체를 공백으로 지움
-static void lockdisp_clear_row(uint8_t row)
+static void LockDisp_Clear_Row(uint8_t row)
 {
     if (LCD_I2C_SetCursor(0, row) != HAL_OK)
         return;
@@ -49,7 +49,7 @@ static void lockdisp_clear_row(uint8_t row)
 
 
 // 잠금 화면 초기화
-bool lockdisp_init(void)
+bool LockDisp_Init(void)
 {
     if (LCD_I2C_Init() != HAL_OK)
         return false;
@@ -77,7 +77,7 @@ bool lockdisp_init(void)
 
 
 // 잠금 상태 화면 갱신
-void lockdisp_update_lock(void)
+void LockDisp_UpdateLock(void)
 {
     if (lock_state >= eLOCK_STATE_MAX)
         return;
@@ -85,7 +85,7 @@ void lockdisp_update_lock(void)
     // 잠금 상태 변경 시 깜빡임 효과
     for (int i = 0; i < 3; i++)
     {
-        lockdisp_clear_row(LOCK_DISPLAY_ROW);
+    	LockDisp_Clear_Row(LOCK_DISPLAY_ROW);
         HAL_Delay(50);
 
         LCD_I2C_SetCursor(0, LOCK_DISPLAY_ROW);
@@ -96,13 +96,13 @@ void lockdisp_update_lock(void)
 
 
 // 비밀번호 입력 상태 화면 갱신
-void lockdisp_update_input(void)
+void LockDisp_UpdateInput(void)
 {
     if (input_state >= eINPUT_STATE_MAX)
         return;
 
     // 기존 입력 내용 제거
-    lockdisp_clear_row(INPUT_DISPLAY_ROW);
+    LockDisp_Clear_Row(INPUT_DISPLAY_ROW);
 
     // 변경된 입력 상태 표시
     LCD_I2C_SetCursor(0, INPUT_DISPLAY_ROW);
@@ -114,7 +114,7 @@ void lockdisp_update_input(void)
 
 
 // 비밀번호 제스처 한 자리 표시
-void lockdisp_next_input(const char *str, size_t len)
+void LockDisp_NextInput(const char *str, size_t len)
 {
     if (str == NULL || len == 0)
         return;

@@ -5,15 +5,15 @@
 #include <stdbool.h>
 
 // LCD 잠금 화면 초기화
-bool lockdisp_init(void);
+bool LockDisp_Init(void);
 
 // 잠금 상태 표시 갱신
-void lockdisp_update_lock(void);
+void LockDisp_UpdateLock(void);
 
 // 비밀번호 입력 상태 표시 갱신
-void lockdisp_update_input(void);
+void LockDisp_UpdateInput(void);
 
 // 입력된 제스처 문자열 표시
-void lockdisp_next_input(const char *str, size_t len);
+void LockDisp_NextInput(const char *str, size_t len);
 
 #endif /* INC_LOCKDISP_H_ */

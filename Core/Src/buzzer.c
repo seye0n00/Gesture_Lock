@@ -22,7 +22,7 @@ typedef struct {
 static Buzzer_t buzzer;
 
 // PWM 출력 시작
-static void buzzer_start(uint32_t frequency, uint32_t duration_ms)
+static void Buzzer_Start(uint32_t frequency, uint32_t duration_ms)
 {
     if (frequency == 0U)
         return;
@@ -46,40 +46,40 @@ static void buzzer_start(uint32_t frequency, uint32_t duration_ms)
 }
 
 // PWM 출력 중지
-void buzzer_stop(void)
+void Buzzer_Stop(void)
 {
     HAL_TIM_PWM_Stop(BUZZER_TIM, BUZZER_CHANNEL);
     buzzer.active = 0;
 }
 
 // 부저 초기화
-void buzzer_init(void)
+void Buzzer_Init(void)
 {
-    buzzer_stop();
+	Buzzer_Stop();
 }
 
 // 입력 상태별 효과음
-void buzzer_on(eINPUT_STATE state)
+void Buzzer_On(eINPUT_STATE state)
 {
     switch (state)
     {
         case eINPUT_STATE_INPUT:
             // 짧은 입력 효과음 1회
-            buzzer_start(BUZZER_INPUT_FREQ, 100);
+        	Buzzer_Start(BUZZER_INPUT_FREQ, 100);
             break;
 
         case eINPUT_STATE_SUCCESS:
             // 짧은 성공 효과음 2회
-            buzzer_start(BUZZER_SUCCESS_FREQ, 100);
+        	Buzzer_Start(BUZZER_SUCCESS_FREQ, 100);
             HAL_Delay(100);
-            buzzer_stop();
+            Buzzer_Stop();
             HAL_Delay(100);
-            buzzer_start(BUZZER_SUCCESS_FREQ, 100);
+            Buzzer_Start(BUZZER_SUCCESS_FREQ, 100);
             break;
 
         case eINPUT_STATE_FAILED:
             // 3초 연속 경고음
-            buzzer_start(BUZZER_FAILED_FREQ, 2000);
+        	Buzzer_Start(BUZZER_FAILED_FREQ, 2000);
             break;
 
         default:
@@ -87,10 +87,10 @@ void buzzer_on(eINPUT_STATE state)
     }
 }
 
-void buzzer_update(void)
+void Buzzer_Update(void)
 {
     if (buzzer.active && (uint32_t)(HAL_GetTick() - buzzer.start_tick) >= buzzer.duration_ms){
-    	buzzer_stop();
+    	Buzzer_Stop();
     	return;
     }
 }

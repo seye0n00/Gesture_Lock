@@ -3,6 +3,6 @@
 
 #include "system_types.h"
 
-void led_set_state(eLOCK_STATE state);
+void LED_SetState(eLOCK_STATE state);
 
 #endif /* INC_LED_H_ */

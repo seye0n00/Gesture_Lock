@@ -1,7 +1,7 @@
 #include "led.h"
 #include "main.h"
 
-void led_set_state(eLOCK_STATE state)
+void LED_SetState(eLOCK_STATE state)
 {
     if (state == eLOCK_STATE_LOCK)
     {

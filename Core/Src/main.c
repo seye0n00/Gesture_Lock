@@ -112,27 +112,27 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   // 비밀번호 초기화
-  reset_password_input();
+  Password_ResetInput();
 
   // 하드웨어 모듈 초기화
-  buzzer_init();
+  Buzzer_Init();
 
-  if (!imu_init())
+  if (!IMU_Init())
   {
       Error_Handler();
   }
 
 
-  if (!lockdisp_init())
+  if (!LockDisp_Init())
   {
       Error_Handler();
   }
 
-  lockdisp_update_lock();
-  lockdisp_update_input();
+  LockDisp_UpdateLock();
+  LockDisp_UpdateInput();
 
   // LED 초기 상태 표시
-  led_set_state(lock_state);
+  LED_SetState(lock_state);
   //Button_Init();
 
   /* USER CODE END 2 */
@@ -141,50 +141,50 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  buzzer_update();
+	  Buzzer_Update();
 	    // 1. 버튼 입력 처리
 	    if (button_pressed)
 	    {
 	        button_pressed = false;
-	        buzzer_stop();
+	        Buzzer_Stop();
 
 	        // 잠금 상태: 비밀번호 검증
 	        if (lock_state == eLOCK_STATE_LOCK)
 	        {
 	        	if (input_state == eINPUT_STATE_INPUT){
-					if (check_password())
+					if (Password_Check())
 					{
 						// 비밀번호 검증 성공
 						lock_state = eLOCK_STATE_UNLOCK;
 						input_state = eINPUT_STATE_SUCCESS;
 
-						led_set_state(lock_state);
+						LED_SetState(lock_state);
 
-						lockdisp_update_lock();
-						lockdisp_update_input();
+						LockDisp_UpdateLock();
+						LockDisp_UpdateInput();
 
-						buzzer_on(eINPUT_STATE_SUCCESS);
+						Buzzer_On(eINPUT_STATE_SUCCESS);
 					}
 					else
 					{
 						// 비밀번호 검증 실패
 						input_state = eINPUT_STATE_FAILED;
 
-						lockdisp_update_input();
-						buzzer_on(eINPUT_STATE_FAILED);
+						LockDisp_UpdateInput();
+						Buzzer_On(eINPUT_STATE_FAILED);
 					}
 
 					// 검증 완료 후 기존 입력 제거
-					reset_password_input();
+					Password_ResetInput();
 				}
 	        	else if (input_state == eINPUT_STATE_FAILED)
 	        	{
 	        	     // 버튼을 다시 누르면 재입력 시작
-	        	     reset_password_input();
-	        	     imu_reset_gesture();
+	        		 Password_ResetInput();
+	        	     IMU_ResetGesture();
 
 	        	     input_state = eINPUT_STATE_INPUT;
-	        	     lockdisp_update_input();
+	        	     LockDisp_UpdateInput();
 	        	 }
 	        }
 
@@ -194,13 +194,13 @@ int main(void)
 	            lock_state = eLOCK_STATE_LOCK;
 	            input_state = eINPUT_STATE_INPUT;
 
-	            reset_password_input();
-	            imu_reset_gesture();
+	            Password_ResetInput();
+	            IMU_ResetGesture();
 
-	            led_set_state(lock_state);
+	            LED_SetState(lock_state);
 
-	            lockdisp_update_lock();
-	            lockdisp_update_input();
+	            LockDisp_UpdateLock();
+	            LockDisp_UpdateInput();
 	        }
 	    }
 
@@ -209,20 +209,20 @@ int main(void)
 	    {
 	        eIMU_INPUT_DIRECT gesture;
 
-	        if (imu_update(&gesture))
+	        if (IMU_Update(&gesture))
 	        {
-	            if (add_password_input(gesture))
+	            if (Password_AddInput(gesture))
 	            {
-	            	buzzer_on(eINPUT_STATE_INPUT);
+	            	Buzzer_On(eINPUT_STATE_INPUT);
 
 	                switch (gesture)
 	                {
 	                    case eIMU_INPUT_DIRECT_L:
-	                        lockdisp_next_input("<-", 2);
+	                    	LockDisp_NextInput("<-", 2);
 	                        break;
 
 	                    case eIMU_INPUT_DIRECT_R:
-	                        lockdisp_next_input("->", 2);
+	                    	LockDisp_NextInput("->", 2);
 	                        break;
 
 	                    default:

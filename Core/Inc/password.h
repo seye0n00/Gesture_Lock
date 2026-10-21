@@ -6,8 +6,8 @@
 
 #define PASSWORD_LENGTH 4
 
-void reset_password_input(void);
-bool add_password_input(eIMU_INPUT_DIRECT gesture);
-bool check_password(void);
+void Password_ResetInput(void);
+bool Password_AddInput(eIMU_INPUT_DIRECT gesture);
+bool Password_Check(void);
 
 #endif /* INC_PASSWORD_H_ */

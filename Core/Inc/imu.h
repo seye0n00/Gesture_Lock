@@ -11,12 +11,10 @@ typedef struct {
     int16_t z;
 } AccelData;
 
-bool imu_init(void);
-bool imu_get_accel(AccelData *data);
-bool imu_get_new_gesture(eIMU_INPUT_DIRECT direction, eIMU_INPUT_DIRECT *gesture);
-bool imu_update(eIMU_INPUT_DIRECT *gesture);
-void imu_reset_gesture(void);
-
-eIMU_INPUT_DIRECT imu_get_direction(const AccelData *data);
+bool IMU_Init(void);
+//bool IMU_GetAccel(AccelData *data);
+//bool IMU_GetNewGesture(eIMU_INPUT_DIRECT direction, eIMU_INPUT_DIRECT *gesture);
+bool IMU_Update(eIMU_INPUT_DIRECT *gesture);
+void IMU_ResetGesture(void);
 
 #endif /* INC_IMU_H_ */

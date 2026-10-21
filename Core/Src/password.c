@@ -17,10 +17,7 @@ static eIMU_INPUT_DIRECT input_password[PASSWORD_LENGTH];
 /* 현재까지 입력된 비밀번호 자리 수 */
 static unsigned int input_count = 0;
 
-
-static eIMU_INPUT_DIRECT cur_input;
-
-void reset_password_input(void)
+void Password_ResetInput(void)
 {
     unsigned int i;
 
@@ -31,7 +28,7 @@ void reset_password_input(void)
     }
 }
 
-bool add_password_input(eIMU_INPUT_DIRECT gesture)
+bool Password_AddInput(eIMU_INPUT_DIRECT gesture)
 {
     // 허용하지 않는 입력
     if (gesture != eIMU_INPUT_DIRECT_L &&
@@ -52,7 +49,7 @@ bool add_password_input(eIMU_INPUT_DIRECT gesture)
     return true;
 }
 
-bool check_password(void)
+bool Password_Check(void)
 {
     // 비밀번호 4자리 입력 여부 확인
     if (input_count != PASSWORD_LENGTH)
