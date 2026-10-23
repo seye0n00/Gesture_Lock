@@ -1,0 +1,36 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="aD9bO6fclT3C20lb9By9" name="페이지-5">
+    <mxGraphModel dx="889" dy="1287" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="dSfRT55s1uXxc--D4ZXO-2" parent="1" style="ellipse;html=1;fillColor=#222222;strokeColor=none;" value="" vertex="1">
+          <mxGeometry height="14" width="14" x="60" y="398" as="geometry" />
+        </mxCell>
+        <mxCell id="dSfRT55s1uXxc--D4ZXO-3" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#E6F1FB;strokeColor=#2A5C99;strokeWidth=2;fontSize=13;fontColor=#222222;" value="&lt;b&gt;&lt;font style=&quot;font-size: 22px;&quot; color=&quot;#0C3A6B&quot;&gt;WAIT_Z&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;L/R 제스처 입력 차단&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="110" width="220" x="107" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="dSfRT55s1uXxc--D4ZXO-4" parent="1" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#E8F5EE;strokeColor=#2A7F5A;strokeWidth=2;fontSize=13;fontColor=#222222;" value="&lt;b&gt;&lt;font style=&quot;font-size: 22px;&quot; color=&quot;#14623F&quot;&gt;READY&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;L/R 제스처 입력 허용&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="110" width="220" x="498" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="dSfRT55s1uXxc--D4ZXO-5" edge="1" parent="1" source="dSfRT55s1uXxc--D4ZXO-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=7;strokeWidth=2;fontSize=12;labelBackgroundColor=#ffffff;strokeColor=#222222;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="dSfRT55s1uXxc--D4ZXO-3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="dSfRT55s1uXxc--D4ZXO-6" edge="1" parent="1" source="dSfRT55s1uXxc--D4ZXO-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=7;strokeWidth=2;fontSize=12;labelBackgroundColor=#ffffff;strokeColor=#2A5C99;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="dSfRT55s1uXxc--D4ZXO-4" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Z 연속 유지 ≥ 100ms&lt;/font&gt;">
+          <mxGeometry relative="1" x="0.0361" y="20" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dSfRT55s1uXxc--D4ZXO-7" edge="1" parent="1" source="dSfRT55s1uXxc--D4ZXO-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=7;strokeWidth=2;fontSize=12;labelBackgroundColor=#ffffff;strokeColor=#2A5C99;exitX=0.5;exitY=1;entryX=0.5;entryY=1;fontColor=#004C99;" target="dSfRT55s1uXxc--D4ZXO-3" value="&lt;font style=&quot;color: rgb(0, 0, 0); font-size: 15px;&quot;&gt;L/R 감지&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b&gt;제스처 이벤트 1회 발생&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;">
+          <mxGeometry relative="1" x="-0.0339" y="35" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="608" y="505" />
+              <mxPoint x="217" y="505" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
