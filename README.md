@@ -72,6 +72,14 @@ MPU6050의 X축 가속도 데이터를 이용해 센서의 좌우 기울기를 �
 - FSM을 이용해 중립 상태 확인과 제스처 입력 가능 상태를 구분했습니다.
 - 중립 상태가 100ms 이상 유지된 경우에만 새로운 제스처를 허용하도록 개선했습니다.
 
+**Hysteresis Thresholds**
+
+![Hysteresis Thresholds](docs/hysteresis.svg)
+
+**Gesture Recognition FSM**
+
+![Gesture Recognition FSM](docs/FSM.drawio.svg)
+
 **4. 결과**
 
 - UART 로그를 통해 방향 판정 결과, FSM 상태 전이, 제스처 이벤트 발생 여부를 확인했습니다.
