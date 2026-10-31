@@ -7223,6 +7223,9 @@ static HAL_StatusTypeDef I2C_WaitOnFlagUntilTimeout(I2C_HandleTypeDef *hi2c, uin
   /* Wait until flag is set */
   while (__HAL_I2C_GET_FLAG(hi2c, Flag) == Status)
   {
+	  uint32_t scl = (GPIOB->IDR & GPIO_IDR_ID8) ? 1U : 0U;
+	  uint32_t sda = (GPIOB->IDR & GPIO_IDR_ID9) ? 1U : 0U;
+
     /* Check for the Timeout */
     if (Timeout != HAL_MAX_DELAY)
     {

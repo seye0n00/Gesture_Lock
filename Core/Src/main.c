@@ -75,6 +75,127 @@ static void MX_USART2_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+#define I2C_SCL_PORT GPIOB
+#define I2C_SCL_PIN  GPIO_PIN_8
+
+#define I2C_SDA_PORT GPIOB
+#define I2C_SDA_PIN  GPIO_PIN_9
+#if 1
+static HAL_StatusTypeDef I2C_BusClear(void)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+
+    // Open-drain 출력은 HIGH 설정 시 라인을 해제함
+    HAL_GPIO_WritePin(GPIOB,
+                      I2C_SCL_PIN | I2C_SDA_PIN,
+                      GPIO_PIN_SET);
+
+    GPIO_InitStruct.Pin = I2C_SCL_PIN | I2C_SDA_PIN;
+    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    HAL_Delay(1);
+
+    // SCL이 LOW로 고정되어 있으면 클록 발생 불가
+    if (HAL_GPIO_ReadPin(I2C_SCL_PORT,
+                         I2C_SCL_PIN) == GPIO_PIN_RESET)
+    {
+        return HAL_BUSY;
+    }
+
+    // SDA가 HIGH이면 이미 버스가 해제된 상태
+    if (HAL_GPIO_ReadPin(I2C_SDA_PORT,
+                         I2C_SDA_PIN) == GPIO_PIN_SET)
+    {
+        return HAL_OK;
+    }
+
+    // SDA LOW: 최대 9개의 클록 펄스 발생
+    for (uint8_t i = 0; i < 9; i++)
+    {
+        // SCL LOW
+        HAL_GPIO_WritePin(I2C_SCL_PORT,
+                          I2C_SCL_PIN,
+                          GPIO_PIN_RESET);
+
+        HAL_Delay(1);
+
+        // SCL HIGH (Open-drain 출력 해제)
+        HAL_GPIO_WritePin(I2C_SCL_PORT,
+                          I2C_SCL_PIN,
+                          GPIO_PIN_SET);
+
+        HAL_Delay(1);
+
+        // 실제 SCL이 HIGH인지 확인
+        if (HAL_GPIO_ReadPin(I2C_SCL_PORT,
+                             I2C_SCL_PIN) == GPIO_PIN_RESET)
+        {
+            return HAL_BUSY;
+        }
+
+        // SDA 해제 여부 확인
+        if (HAL_GPIO_ReadPin(I2C_SDA_PORT,
+                             I2C_SDA_PIN) == GPIO_PIN_SET)
+        {
+            break;
+        }
+    }
+
+    // 9회 이후에도 SDA가 LOW이면 복구 실패
+    if (HAL_GPIO_ReadPin(I2C_SDA_PORT,
+                         I2C_SDA_PIN) == GPIO_PIN_RESET)
+    {
+        return HAL_ERROR;
+    }
+
+    // STOP 조건 생성
+    // SCL LOW 상태에서 SDA LOW
+    HAL_GPIO_WritePin(I2C_SCL_PORT,
+                      I2C_SCL_PIN,
+                      GPIO_PIN_RESET);
+
+    HAL_GPIO_WritePin(I2C_SDA_PORT,
+                      I2C_SDA_PIN,
+                      GPIO_PIN_RESET);
+
+    HAL_Delay(1);
+
+    // SCL HIGH
+    HAL_GPIO_WritePin(I2C_SCL_PORT,
+                      I2C_SCL_PIN,
+                      GPIO_PIN_SET);
+
+    HAL_Delay(1);
+
+    if (HAL_GPIO_ReadPin(I2C_SCL_PORT,
+                         I2C_SCL_PIN) == GPIO_PIN_RESET)
+    {
+        return HAL_BUSY;
+    }
+
+    // SCL HIGH에서 SDA LOW -> HIGH: STOP
+    HAL_GPIO_WritePin(I2C_SDA_PORT,
+                      I2C_SDA_PIN,
+                      GPIO_PIN_SET);
+
+    HAL_Delay(1);
+
+    if (HAL_GPIO_ReadPin(I2C_SDA_PORT,
+                         I2C_SDA_PIN) == GPIO_PIN_RESET)
+    {
+        return HAL_ERROR;
+    }
+
+    return HAL_OK;
+}
+#endif
+
 /* USER CODE END 0 */
 
 /**
@@ -107,6 +228,18 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
+
+#if 1
+  // I2C 버스 복구
+  HAL_StatusTypeDef bus_status = I2C_BusClear();
+
+  if (bus_status != HAL_OK)
+  {
+      Error_Handler();
+  }
+#endif
+
+  // GPIO를 I2C Alternate Function으로 재설정
   MX_I2C1_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
@@ -133,7 +266,6 @@ int main(void)
 
   // LED 초기 상태 표시
   LED_SetState(lock_state);
-  //Button_Init();
 
   /* USER CODE END 2 */
 
@@ -454,7 +586,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : BUTTON_Pin */
   GPIO_InitStruct.Pin = BUTTON_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(BUTTON_GPIO_Port, &GPIO_InitStruct);
 

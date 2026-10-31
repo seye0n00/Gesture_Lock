@@ -2,11 +2,11 @@
 
 extern I2C_HandleTypeDef hi2c1;
 
-// MPU6050 I2C Address (AD0 = LOW)
+// MPU6050 I2C 주소 (AD0 = LOW)
 #define MPU6050_ADDR              (0x68 << 1)
 
 
-// MPU6050 Register Address
+// MPU6050 레지스터 주소
 #define MPU6050_WHO_AM_I          0x75
 #define MPU6050_PWR_MGMT_1        0x6B
 #define MPU6050_PWR_MGMT_2        0x6C
@@ -15,7 +15,7 @@ extern I2C_HandleTypeDef hi2c1;
 #define MPU6050_SMPLRT_DIV        0x19
 
 
-// Configuration Values
+// MPU6050 설정값
 #define MPU6050_DEVICE_ID         0x68
 #define MPU6050_PWR_MGMT_1_CFG    0x01
 #define MPU6050_PWR_MGMT_2_CFG    0x00
@@ -23,10 +23,10 @@ extern I2C_HandleTypeDef hi2c1;
 #define MPU6050_DLPF_CFG          0x04
 #define MPU6050_SAMPLE_RATE_CFG   0x09
 
-
+// I2C 통신 타임아웃 (ms)
 #define MPU6050_TIMEOUT_MS        100
 
-
+// X축 가속도 데이터 시작 레지스터 주소
 #define MPU6050_ACCEL_XOUT_H  0x3B
 
 HAL_StatusTypeDef MPU6050_Init(void)
@@ -34,21 +34,16 @@ HAL_StatusTypeDef MPU6050_Init(void)
     HAL_StatusTypeDef status;
     uint8_t data;
 
-
-    volatile uint32_t debug_state;
-    volatile uint32_t debug_sr2;
-    volatile uint32_t debug_scl;
-    volatile uint32_t debug_sda;
-
-    debug_state = hi2c1.State;
-    debug_sr2 = I2C1->SR2;
-
-    debug_scl = (GPIOB->IDR & GPIO_PIN_8) ? 1 : 0;
-    debug_sda = (GPIOB->IDR & GPIO_PIN_9) ? 1 : 0;
-
-
-    // Check Device ID
-    status = HAL_I2C_Mem_Read(&hi2c1, MPU6050_ADDR, MPU6050_WHO_AM_I, I2C_MEMADD_SIZE_8BIT, &data, 1, MPU6050_TIMEOUT_MS);
+    // 장치 ID 확인
+    status = HAL_I2C_Mem_Read(
+        &hi2c1,
+        MPU6050_ADDR,
+        MPU6050_WHO_AM_I,
+        I2C_MEMADD_SIZE_8BIT,
+        &data,
+        1,
+        MPU6050_TIMEOUT_MS
+    );
 
     if (status != HAL_OK)
         return status;
@@ -57,9 +52,17 @@ HAL_StatusTypeDef MPU6050_Init(void)
         return HAL_ERROR;
 
 
-    // Wake up MPU6050
+    // MPU6050 절전 모드 해제 및 클록 소스 설정
     data = MPU6050_PWR_MGMT_1_CFG;
-    status = HAL_I2C_Mem_Write(&hi2c1, MPU6050_ADDR, MPU6050_PWR_MGMT_1, I2C_MEMADD_SIZE_8BIT, &data, 1, MPU6050_TIMEOUT_MS);
+    status = HAL_I2C_Mem_Write(
+        &hi2c1,
+        MPU6050_ADDR,
+        MPU6050_PWR_MGMT_1,
+        I2C_MEMADD_SIZE_8BIT,
+        &data,
+        1,
+        MPU6050_TIMEOUT_MS
+    );
 
     if (status != HAL_OK)
         return status;
@@ -67,34 +70,63 @@ HAL_StatusTypeDef MPU6050_Init(void)
     HAL_Delay(10);
 
 
-    // Enable all accelerometer and gyroscope axes
+    // 가속도계 및 자이로스코프의 모든 축 활성화
     data = MPU6050_PWR_MGMT_2_CFG;
-    status = HAL_I2C_Mem_Write(&hi2c1, MPU6050_ADDR, MPU6050_PWR_MGMT_2, I2C_MEMADD_SIZE_8BIT, &data, 1, MPU6050_TIMEOUT_MS);
-
+    status = HAL_I2C_Mem_Write(
+        &hi2c1,
+        MPU6050_ADDR,
+        MPU6050_PWR_MGMT_2,
+        I2C_MEMADD_SIZE_8BIT,
+        &data,
+        1,
+        MPU6050_TIMEOUT_MS
+    );
 
     if (status != HAL_OK)
         return status;
 
-    // Set Accelerometer Range: ±2g
+    // 가속도 측정 범위 설정: ±2g
     data = MPU6050_ACCEL_CFG;
-    status = HAL_I2C_Mem_Write(&hi2c1, MPU6050_ADDR, MPU6050_ACCEL_CONFIG, I2C_MEMADD_SIZE_8BIT, &data, 1, MPU6050_TIMEOUT_MS);
-
+    status = HAL_I2C_Mem_Write(
+        &hi2c1,
+        MPU6050_ADDR,
+        MPU6050_ACCEL_CONFIG,
+        I2C_MEMADD_SIZE_8BIT,
+        &data,
+        1,
+        MPU6050_TIMEOUT_MS
+    );
 
     if (status != HAL_OK)
         return status;
 
-    // Configure DLPF: 21Hz
+    // 디지털 저역 통과 필터 설정: 21Hz
     data = MPU6050_DLPF_CFG;
-    status = HAL_I2C_Mem_Write(&hi2c1, MPU6050_ADDR, MPU6050_CONFIG, I2C_MEMADD_SIZE_8BIT, &data, 1, MPU6050_TIMEOUT_MS);
-
+    status = HAL_I2C_Mem_Write(
+        &hi2c1,
+        MPU6050_ADDR,
+        MPU6050_CONFIG,
+        I2C_MEMADD_SIZE_8BIT,
+        &data,
+        1,
+        MPU6050_TIMEOUT_MS
+    );
 
     if (status != HAL_OK)
         return status;
 
 
-    // Set Sample Rate: 100Hz
+    // 샘플링 주파수 설정: 100Hz
     data = MPU6050_SAMPLE_RATE_CFG;
-    status = HAL_I2C_Mem_Write(&hi2c1, MPU6050_ADDR, MPU6050_SMPLRT_DIV, I2C_MEMADD_SIZE_8BIT, &data, 1, MPU6050_TIMEOUT_MS);
+    status = HAL_I2C_Mem_Write(
+        &hi2c1,
+        MPU6050_ADDR,
+        MPU6050_SMPLRT_DIV,
+        I2C_MEMADD_SIZE_8BIT,
+        &data,
+        1,
+        MPU6050_TIMEOUT_MS
+    );
 
     if (status != HAL_OK)
         return status;
@@ -112,7 +144,7 @@ HAL_StatusTypeDef MPU6050_ReadAccel(int16_t *ax, int16_t *ay, int16_t *az)
         return HAL_ERROR;
     }
 
-
+    // X, Y, Z축 가속도 데이터 6바이트 읽기
     HAL_StatusTypeDef status = HAL_I2C_Mem_Read(
         &hi2c1,
         MPU6050_ADDR,

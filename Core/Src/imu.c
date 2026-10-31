@@ -1,4 +1,3 @@
-
 #include "imu.h"
 #include "mpu6050_i2c.h"
 
@@ -10,7 +9,6 @@ extern UART_HandleTypeDef huart2;
 
 // MPU6050 +/-2g
 #define IMU_LR_THRESHOLD       11585
-#define IMU_Z_THRESHOLD        4240
 #define IMU_Z_HOLD_MS          100U
 
 typedef enum {
@@ -18,7 +16,7 @@ typedef enum {
     IMU_STATE_READY		// L/R 입력 허용
 } eIMU_STATE;
 
-// 히스테리시스로 마지막으로 판별한 방향
+// 마지막으로 판별한 방향
 static eIMU_INPUT_DIRECT cur_input = eIMU_INPUT_DIRECT_MAX;
 
 // 제스처 입력 허용 상태
@@ -35,7 +33,6 @@ static void IMU_ResetZTimer(void)
     z_start_tick = 0;
     z_timer_running = false;
 }
-
 
 // 제스처 FSM 초기화
 void IMU_ResetGesture(void)
@@ -61,23 +58,17 @@ bool IMU_GetAccel(AccelData *data)
     return (MPU6050_ReadAccel(&data->x, &data->y, &data->z) == HAL_OK);
 }
 
-static eIMU_INPUT_DIRECT IMU_DetectDirection(int16_t x, eIMU_INPUT_DIRECT prev_direction)
+static eIMU_INPUT_DIRECT IMU_DetectDirection(int16_t x)
 {
-    if (prev_direction == eIMU_INPUT_DIRECT_L)
-    {
-        return (x >= IMU_Z_THRESHOLD) ? eIMU_INPUT_DIRECT_L : eIMU_INPUT_DIRECT_Z;
-    }
-
-    if (prev_direction == eIMU_INPUT_DIRECT_R)
-    {
-        return (x <= -IMU_Z_THRESHOLD) ? eIMU_INPUT_DIRECT_R : eIMU_INPUT_DIRECT_Z;
-    }
-
     if (x >= IMU_LR_THRESHOLD)
+    {
         return eIMU_INPUT_DIRECT_L;
+    }
 
     if (x <= -IMU_LR_THRESHOLD)
+    {
         return eIMU_INPUT_DIRECT_R;
+    }
 
     return eIMU_INPUT_DIRECT_Z;
 }
@@ -110,7 +101,7 @@ bool IMU_GetNewGesture(eIMU_INPUT_DIRECT direction, eIMU_INPUT_DIRECT *gesture)
             return false;
         }
 
-        // Z가 200ms 연속 유지되었는지 확인
+        // Z가 100ms 연속 유지되었는지 확인
         if ((uint32_t)(now - z_start_tick) >= IMU_Z_HOLD_MS)
         {
             imu_state = IMU_STATE_READY;
@@ -157,7 +148,7 @@ bool IMU_Update(eIMU_INPUT_DIRECT *gesture)
     }
 
     // 이전 방향을 이용해 새로운 방향 판별
-    eIMU_INPUT_DIRECT direction = IMU_DetectDirection(accel.x, cur_input);
+    eIMU_INPUT_DIRECT direction = IMU_DetectDirection(accel.x);
 
     // 방향 상태 갱신
     cur_input = direction;
