@@ -23,7 +23,7 @@
 
 ## System Architecture
 
-![Gesture Lock System Architecture](docs/system.drawio.svg)
+![Gesture Lock System Architecture](docs/System_Architecture.drawio.svg)
 
 
 ### Component Responsibilities
